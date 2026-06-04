@@ -48,9 +48,9 @@ export default function Mision007() {
     if ('speechSynthesis' in window) {
       const mensaje = new SpeechSynthesisUtterance(texto);
       mensaje.lang = 'es-ES';
-      mensaje.pitch = 1.5;  // tono (0 a 2)
+      //mensaje.pitch = 1.5;  // tono (0 a 2)
       mensaje.rate = 1.1;   // velocidad (0.1 a 10)
-      mensaje.volume = 1;   // volumen (0 a 1)
+      //mensaje.volume = 1;   // volumen (0 a 1)
       window.speechSynthesis.speak(mensaje);
     }
   };
