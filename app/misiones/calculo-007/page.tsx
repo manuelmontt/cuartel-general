@@ -219,7 +219,7 @@ export default function Mision007() {
           
           <div className="flex-1 flex flex-col items-center justify-center mb-6">
             <div className="text-5xl font-bold tracking-wider mb-8">
-              {problem.num1} {problem.op} {problem.problem && problem.num2 /* fallback visual */} {problem.num2}
+              {problem.num1} {problem.op} {problem.num2}
             </div>
             <div className="w-full h-16 bg-black border-b-4 border-green-500 text-4xl text-center flex items-center justify-center">
               {userInput || <span className="opacity-30">...</span>}
