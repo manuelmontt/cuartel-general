@@ -48,7 +48,9 @@ export default function Mision007() {
     if ('speechSynthesis' in window) {
       const mensaje = new SpeechSynthesisUtterance(texto);
       mensaje.lang = 'es-ES';
-      mensaje.rate = 1.1;
+      mensaje.pitch = 1.5;  // tono (0 a 2)
+      mensaje.rate = 1.1;   // velocidad (0.1 a 10)
+      mensaje.volume = 1;   // volumen (0 a 1)
       window.speechSynthesis.speak(mensaje);
     }
   };
@@ -82,8 +84,17 @@ export default function Mision007() {
   }, [digitsCount, ops]);
 
   const startGame = () => {
+    // Si el campo quedó en 0 o vacío, forzamos un valor mínimo antes de partir
+    const safeDigits = digitsCount < 1 ? 1 : digitsCount;
+    const safeTotal = qTotal < 1 ? 1 : qTotal;
+    const safeTime = timeTotal < 10 ? 10 : timeTotal;
     if (!ops.add && !ops.sub && !ops.mul) return alert("¡Selecciona al menos una operación!");
-    
+  
+    // Usamos los valores seguros
+    setTimeLeft(safeTime);
+    setQTotal(safeTotal);
+    setDigitsCount(safeDigits);
+
     setTimeLeft(timeTotal);
     setQCurrent(0);
     setCorrectas(0);
@@ -112,6 +123,13 @@ export default function Mision007() {
 
     return () => clearInterval(timerId);
   }, [timeLeft, gameState, playBeep]);
+
+  // Alerta de tiempo crítico
+  //useEffect(() => {
+  //  if (gameState === 'playing' && timeLeft === 10) {
+  //    hablar("Agente, se acaba el tiempo");
+  //  }
+  //}, [timeLeft, gameState, hablar]);
 
   const checkAnswer = () => {
     if (userInput === "") return;
@@ -165,15 +183,42 @@ export default function Mision007() {
           <div className="space-y-4 mb-8">
             <div className="flex justify-between items-center">
               <label>Ejercicios:</label>
-              <input type="number" value={qTotal} onChange={(e) => setQTotal(Number(e.target.value))} className="bg-neutral-900 border border-green-500 rounded p-2 w-20 text-center" />
+              <input 
+                type="number" 
+                value={qTotal === 0 ? '' : qTotal} 
+                onChange={(e) => setQTotal(e.target.value === '' ? 0 : Number(e.target.value))}
+                onFocus={(e) => e.target.select()}
+                className="bg-neutral-900 border border-green-500 rounded p-2 w-20 text-center" 
+              />
             </div>
             <div className="flex justify-between items-center">
               <label>Tiempo (seg):</label>
-              <input type="number" value={timeTotal} onChange={(e) => setTimeTotal(Number(e.target.value))} className="bg-neutral-900 border border-green-500 rounded p-2 w-20 text-center" />
+              <input 
+                type="number" 
+                value={timeTotal === 0 ? '' : timeTotal} 
+                onChange={(e) => setTimeTotal(e.target.value === '' ? 0 : Number(e.target.value))}
+                onFocus={(e) => e.target.select()}
+                className="bg-neutral-900 border border-green-500 rounded p-2 w-20 text-center" 
+              />
             </div>
             <div className="flex justify-between items-center">
               <label>Dígitos Max:</label>
-              <input type="number" value={digitsCount} onChange={(e) => setDigitsCount(Number(e.target.value))} className="bg-neutral-900 border border-green-500 rounded p-2 w-20 text-center" max={4} min={1} />
+              <input 
+                type="number" 
+                // Mostramos el valor como cadena, si es 0 o indefinido, mostramos vacío
+                value={digitsCount === 0 ? '' : digitsCount} 
+                
+                // Aquí está el secreto: NO inyectamos el 1 automáticamente
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setDigitsCount(val === '' ? 0 : Number(val));
+                }}
+                
+                onFocus={(e) => e.target.select()}
+                className="bg-neutral-900 border border-green-500 rounded p-2 w-20 text-center" 
+                max={4} 
+                min={1} 
+              />
             </div>
             
             <div className="pt-4 border-t border-green-900">
